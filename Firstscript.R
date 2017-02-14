@@ -1,6 +1,6 @@
 library(xlsx)
 
-possible_dir <- c('C:/RajuPC/CollaborativeSSDA/Assignments/Assignment4', '/Users/mariorodriguez/Desktop/Thesis')
+possible_dir <- c('/Users/alvarolopezguiresse/GoogleDrive/[] ADMINISTRACION PUBLICA/THESIS/Thesis', '/Users/mariorodriguez/Desktop/Thesis')
 repmis::set_valid_wd(possible_dir)
 
 
