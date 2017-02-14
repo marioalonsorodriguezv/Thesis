@@ -1,6 +1,8 @@
 library(xlsx)
 
-setwd('/Users/mariorodriguez/Desktop/Thesis')
+possible_dir <- c('C:/RajuPC/CollaborativeSSDA/Assignments/Assignment4', '/Users/mariorodriguez/Desktop/Thesis')
+repmis::set_valid_wd(possible_dir)
+
 
 QoG <- read.csv('qog_std.csv')
 
@@ -62,3 +64,5 @@ IDEA <- read.xlsx("database.xlsx", 1)
 IDEA$ccodealp <- countrycode(IDEA$country, 'country.name', 'iso3c', warn = FALSE)
 
 Merged <- merge(IDEA, QoGts, by = c('ccodealp', 'year'))
+
+write.csv(Merged, file = "DatabaseCombined.csv")
