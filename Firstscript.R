@@ -1,4 +1,7 @@
+
+library(countrycode)
 library(xlsx)
+library(repmis)
 
 possible_dir <- c('/Users/alvarolopezguiresse/GoogleDrive/[] ADMINISTRACION PUBLICA/THESIS/Thesis', '/Users/mariorodriguez/Desktop/Thesis')
 repmis::set_valid_wd(possible_dir)
