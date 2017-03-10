@@ -67,7 +67,7 @@ QoGts<-QoGts[!(QoGts$year==2016),]
 
 ####Abrir la base de IDEA con control of corruption
 
-IDEA <- read.xlsx("database.xlsx", 1)
+IDEA <- read.xlsx("graficas_y_analisis_v2.xlsx", 1)
 
 IDEA$ccodealp <- countrycode(IDEA$country, 'country.name', 'iso3c', warn = FALSE)
 
@@ -105,8 +105,20 @@ fixed <- plm(wb_coc ~ idea_index, data=MergedSelect, index=c("country", "year"),
 
 summary(fixed)
 
+####Abrir datos del WEF-Judicial Independence
+
 WEFJI <- read.xlsx("WEFJudInd.xlsx", 1)
 
+
+#####Como limpiamos 
+
 WEFJIclean <- gather(WEFJI, country, wefji, Albania:Zimbabwe)
+
+WEFJI <- write.csv(WEFJIclean, "WEFJudicialIndependence.csv")
+
+WEFJI <- read.csv("WEFJudicialIndependence.csv")
+#####Descargar datos del world bank
+
+WorldBank <- WDI(country = 'all', start = '1996', end = '2015', indicator = c('SI.POV.GINI', 'SP.DYN.LE00.IN', 'NY.GDP.MKTP.CD'), extra = FALSE)
 
 
