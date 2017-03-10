@@ -1,10 +1,16 @@
+####Cargar los paquetes que necesitamos para limpiar los datos
 
+library(WDI)
 library(countrycode)
 library(xlsx)
 library(repmis)
+library(tidyr)
+library(WDI)
 
 possible_dir <- c('/Users/alvarolopezguiresse/GoogleDrive/[] ADMINISTRACION PUBLICA/THESIS/Thesis', '/Users/mariorodriguez/Desktop/Thesis')
 repmis::set_valid_wd(possible_dir)
+
+#####Abrir la base de Gotemburgo y limpiarla por años
 
 QoGts <- read.csv('qog_std_ts.csv')
 
@@ -59,6 +65,8 @@ QoGts<-QoGts[!(QoGts$year==1993),]
 QoGts<-QoGts[!(QoGts$year==1994),]
 QoGts<-QoGts[!(QoGts$year==2016),]
 
+####Abrir la base de IDEA con control of corruption
+
 IDEA <- read.xlsx("database.xlsx", 1)
 
 IDEA$ccodealp <- countrycode(IDEA$country, 'country.name', 'iso3c', warn = FALSE)
@@ -96,3 +104,9 @@ MergedSelect <- MergedSelect[!duplicated(MergedSelect),]
 fixed <- plm(wb_coc ~ idea_index, data=MergedSelect, index=c("country", "year"), model="within")
 
 summary(fixed)
+
+WEFJI <- read.xlsx("WEFJudInd.xlsx", 1)
+
+WEFJIclean <- gather(WEFJI, country, wefji, Albania:Zimbabwe)
+
+
