@@ -8,6 +8,7 @@ library(tidyr)
 library(WDI)
 library(XML)
 library(plyr)
+library(plm)
 
 possible_dir <- c('/Users/alvarolopezguiresse/GoogleDrive/[] ADMINISTRACION PUBLICA/THESIS/Thesis', '/Users/mariorodriguez/Desktop/Thesis')
 repmis::set_valid_wd(possible_dir)
@@ -193,10 +194,14 @@ CepalGastos <- CepalGastos[,-(1)]
 
 AnalisisRCompleta <- merge(IDEA, WorldBank, by = c('iso3c', 'year'))
 
-AnalisisRCompleta <- merge(AnalisisRCompleta, WEFJI, by = c('iso3c', 'year'))
-
 write.csv(AnalisisRCompleta, file = "AnalisisRCompleta.csv")
+
+AnalisisRCompletaWEF <- merge(AnalisisRCompleta, WEFJI, by = c('iso3c', 'year'))
+
+write.csv(AnalisisRCompletaWEF, file = "AnalisisRCompletaWEF.csv")
 
 AnalisisAL <- merge(AnalisisRCompleta, CepalGastos, by = c('iso3c', 'year'))
 
 write.csv(AnalisisAL, file = "AnalisisAL.csv")
+
+#####Abrir 
