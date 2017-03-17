@@ -10,10 +10,10 @@ library(XML)
 library(plyr)
 library(plm)
 
-possible_dir <- c('/Users/alvarolopezguiresse/GoogleDrive/[] ADMINISTRACION PUBLICA/THESIS/Thesis', '/Users/mariorodriguez/Desktop/Thesis')
+possible_dir <- c('/Users/alvarolopezguiresse/GoogleDrive/[] ADMINISTRACION PUBLICA/tesis/Thesis', '/Users/mariorodriguez/Desktop/Thesis')
 repmis::set_valid_wd(possible_dir)
 
-#####Abrir la base de Gotemburgo y limpiarla por años
+#####Abrir la base de Gotemburgo y limpiarla por a??os
 
 QoGts <- read.csv('qog_std_ts.csv')
 
@@ -111,7 +111,7 @@ summary(fixed)
 ##############Analisis de R
 
 
-####Abrimos última versión de la base de IDEA y le agregamos el iso3c
+####Abrimos ??ltima versi??n de la base de IDEA y le agregamos el iso3c
 
 IDEA <- read.csv("AnalisisR.csv")
 
