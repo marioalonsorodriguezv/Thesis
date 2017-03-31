@@ -253,3 +253,20 @@ IDEAmap <- gvisGeoChart(IDEAmapdata, locationvar = 'iso3c',
 
 print(IDEAmap, tag = 'chart')
 
+####Regresion en r
+
+m1 <- plm(CoC ~ idea_pct + lifeexpectancy + natres + wefji:natres + wefji:idea_pct, data=AnalisisRCompletaWEF, index= c('iso3c', 'year'), model = 'within')
+summary(m1)
+
+m2 <- plm(CoC ~ idea_pct*wefji + lifeexpectancy + natres, data=AnalisisRCompletaWEF, index= c('iso3c', 'year'), model = 'random')
+summary(m2)
+
+m3 <- plm(CoC ~ idea_pct*wefji+ lifeexpectancy + CepalGastos*wefji, data=AnalisisAL, index= c('iso3c', 'year'), model = 'within')
+summary(m3)
+
+m4 <- plm(CoC ~ idea_pct*wefji+ lifeexpectancy + CepalGastos*wefji, data=AnalisisAL, index= c('iso3c', 'year'), model = 'within')
+summary(m4)
+
+
+
+
