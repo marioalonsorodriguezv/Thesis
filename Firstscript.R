@@ -204,4 +204,10 @@ AnalisisAL <- merge(AnalisisRCompleta, CepalGastos, by = c('iso3c', 'year'))
 
 write.csv(AnalisisAL, file = "AnalisisAL.csv")
 
-#####Abrir 
+write.dta(AnalisisAL, file = "AnalisisAL.dta", version = 10,
+          convert.dates = TRUE, tz = "GMT",
+          convert.factors = c("labels", "string", "numeric", "codes"))
+
+#####Datos naturales
+
+WorldBankNatResources <- WDI(country = 'all', start = '1996', end = '2015', indicator = c('ny.gdp.totl.rt.zs'), extra =TRUE)
