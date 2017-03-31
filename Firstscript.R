@@ -13,45 +13,6 @@ library(plm)
 possible_dir <- c('/Users/alvarolopezguiresse/GoogleDrive/[] ADMINISTRACION PUBLICA/tesis/Thesis', '/Users/mariorodriguez/Desktop/Thesis')
 repmis::set_valid_wd(possible_dir)
 
-####Abrir la base de IDEA con control of corruption
-
-IDEA <- read.csv("AnalisisR.csv")
-
-IDEA$ccodealp <- countrycode(IDEA$Country, 'country.name', 'iso3c', warn = FALSE)
-
-IDEA <- IDEA[, -2]
-
-Merged <- merge(IDEA, QoGts, by = c('ccodealp', 'year'))
-
-write.csv(Merged, file = "DatabaseCombined.csv")
-
-Merged <- read.csv('DatabaseCombined.csv')
-
-Merged <- Merged[, -1]
-
-MergedSelect <- Merged[, c('ccodealp', "year", "country", "region", "incomegroup", "idea_index", "undp_hdi", 'bti_ij', 'ciri_injud', 'h_j', 'wef_ji', 'fi_index')]
-
-COC <- read.xlsx("database.xlsx", 6)
-
-COC <- COC[!(COC$country=='KOSOVO'),]
-
-COC$ccodealp <- countrycode(COC$country, 'country.name', 'iso3c', warn = TRUE)
-
-names(COC)[names(COC)=="y"] <- "wb_coc"
-
-COC <- COC[, c('year', 'wb_coc', 'ccodealp')]
-
-MergedSelect <- merge(COC, MergedSelect, by = c('ccodealp', 'year'))
-
-VerifyMergedSelect <- MergedSelect[, c('country', 'year')]
-
-MergedSelect[duplicated(MergedSelect),]
-
-MergedSelect <- MergedSelect[!duplicated(MergedSelect),]
-
-fixed <- plm(wb_coc ~ idea_index, data=MergedSelect, index=c("country", "year"), model="within")
-
-summary(fixed)
 
 ##############Analisis de R
 
@@ -234,3 +195,13 @@ write.csv(AnalisisRCompletaWEF, file = "AnalisisRCompletaWEF.csv")
 AnalisisAL <- merge(AnalisisRCompletaWEF, CepalGastos, by = c('iso3c', 'year'))
 
 write.csv(AnalisisAL, file = "AnalisisAL.csv")
+
+
+#####Crear dataframes para el scatterplot y el heatmap
+
+write.csv (IDEA, "IDEA.csv")
+
+IDEAmap <- IDEA[IDEA$year == '2015',]
+
+
+
