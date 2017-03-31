@@ -231,6 +231,6 @@ AnalisisRCompletaWEF <- merge(AnalisisRCompleta, WEFJI, by = c('iso3c', 'year'))
 
 write.csv(AnalisisRCompletaWEF, file = "AnalisisRCompletaWEF.csv")
 
-AnalisisAL <- merge(AnalisisRCompleta, CepalGastos, by = c('iso3c', 'year'))
+AnalisisAL <- merge(AnalisisRCompletaWEF, CepalGastos, by = c('iso3c', 'year'))
 
 write.csv(AnalisisAL, file = "AnalisisAL.csv")
