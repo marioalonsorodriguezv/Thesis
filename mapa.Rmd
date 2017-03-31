@@ -1,0 +1,47 @@
+---
+title: "mapa"
+author: "los latinos"
+date: "31/3/2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(WDI)
+library(countrycode)
+library(xlsx)
+library(repmis)
+library(tidyr)
+library(WDI)
+library(XML)
+library(plyr)
+library(plm)
+library(stargazer)
+library(ggplot2)
+library(plotly)
+library(plm)
+library(googleVis)
+library(reshape2)
+
+possible_dir <- c('/Users/alvarolopezguiresse/GoogleDrive/[] ADMINISTRACION PUBLICA/tesis/Thesis', '/Users/mariorodriguez/Desktop/Thesis')
+repmis::set_valid_wd(possible_dir)
+```
+
+## Mapa de calor
+
+Esto es solo para ver el mapa
+
+```{r cars, results='asis', echo=FALSE}
+IDEAmapdata <- read.csv("IDEAmapdata.csv")
+
+
+IDEAmap <- gvisGeoChart(IDEAmapdata, locationvar = 'iso3c',
+                       colorvar = 'idea_pct',
+                       options = list(
+                         colors = "['red', 'yellow']"
+                       ))
+
+print(IDEAmap, tag = 'chart')
+```
+

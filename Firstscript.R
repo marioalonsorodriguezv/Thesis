@@ -9,6 +9,12 @@ library(WDI)
 library(XML)
 library(plyr)
 library(plm)
+library(stargazer)
+library(ggplot2)
+library(plotly)
+library(plm)
+library(googleVis)
+library(reshape2)
 
 possible_dir <- c('/Users/alvarolopezguiresse/GoogleDrive/[] ADMINISTRACION PUBLICA/tesis/Thesis', '/Users/mariorodriguez/Desktop/Thesis')
 repmis::set_valid_wd(possible_dir)
@@ -215,7 +221,18 @@ write.csv(AnalisisAL, file = "AnalisisAL.csv")
 
 write.csv (IDEA, "IDEA.csv")
 
-IDEAmap <- IDEA[IDEA$year == '2015',]
+IDEAmapdata <- IDEA[IDEA$year == '2015',]
+
+IDEAmapdata <- IDEAmapdata[, c("iso3c", "idea_pct")]
+
+write.csv(IDEAmapdata, 'IDEAmapdata.csv')
 
 
+IDEAmap <- gvisGeoChart(IDEAmapdata, locationvar = 'iso3c',
+                       colorvar = 'idea_pct',
+                       options = list(
+                         colors = "['red', 'yellow']"
+                       ))
+
+print(IDEAmap, tag = 'chart')
 
