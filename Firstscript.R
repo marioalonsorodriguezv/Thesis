@@ -53,8 +53,6 @@ WEFJI <- read.csv("WEFJudicialIndependence.csv")
 
 WEFJI <- WEFJI[,-(1)] 
 
-WEFJI <- WEFJI[,-(2)] 
-
 #####Descargar datos del world bank y limpiarlos
 
 WorldBank <- WDI(country = 'all', start = '1996', end = '2015', indicator = c('SI.POV.GINI', 'SP.DYN.LE00.IN', 'NY.GDP.MKTP.CD', 'ny.gdp.totl.rt.zs', 'SP.RUR.TOTL.ZS', 'SE.TER.ENRR'), extra =TRUE)
@@ -165,16 +163,19 @@ QoGts<-QoGts[!(QoGts$year==1994),]
 QoGts<-QoGts[!(QoGts$year==2016),]
 
 
-QoGts <- QoGts[, c( "cname", 'year', "fh_status","fh_fotpc", "dr_sg", 
+QoGts <- QoGts[, c( "cname", 'year','ccodealp', "fh_status","fh_fotpc", "dr_sg", 
                     "dr_eg", "hf_trade", "sgi_ecgf", "fi_index", "fi_index_cl", 
                     "hf_business", "hf_efiscore", "hf_financ", "hf_fiscal")]
 
-QoGts$iso3c <- countrycode(QoGts$cname, 'country.name', 'iso3c', warn = TRUE)
 
 QoGts <- QoGts[!QoGts$cname %in% c("Germany, East", "Germany, West", 
-                                   "Korea, North", "Micronesia", "Serbia and Montenegro"),]
+                                   "Korea, North", "Micronesia", "Serbia and Montenegro",
+                                   "Cyprus (-1974)", "Ethiopia (-1992)", "France (-1962)", 
+                                   "Malaysia (-1965)","Pakistan (-1970)", "USSR"),]
 
+names(QoGts)[3]<-"iso3c"
 
+# QoGts$iso3c <- countrycode(QoGts$cname, 'country.name', 'iso3c', warn = TRUE)
 
 
 #####Datos FOTPS
@@ -189,11 +190,17 @@ FOTP<- gather(FOTP, "year", "FOTP", 2:21)
 
 names(FOTP)[1] <- c("country")
 
+FOTP <- FOTP[!is.na(FOTP$FOTP),]
+
+
+
 FOTP$iso3c <- countrycode(FOTP$country, 'country.name', 'iso3c', warn = TRUE)
 
 FOTP <- FOTP[!FOTP$country %in% c("Crimea","Germany, East", "Germany, West", 
                                    "Israeli-Occupied Territories and Palestinian Authority",
                                   "Micronesia","Kosovo", "Serbia and Montenegro", "Transkei", "Yemen, North"),]
+FOTP <- FOTP[!is.na(FOTP$iso3c),]
+
 
 names(FOTP)[1] <- c("country.fotp")
 
