@@ -29,6 +29,8 @@ colnames(IDEA)[1] <- "country"
 
 IDEA$iso3c <- countrycode(IDEA$country, 'country.name', 'iso3c', warn = TRUE)
 
+names(IDEA)[1] <- c("country.IDEA")
+
 ####Abrir datos del WEF-Judicial Independence
 
 WEFJI <- read.xlsx("WEFJudInd.xlsx", 1)
@@ -51,18 +53,18 @@ WEFJI <- WEFJI[,-(2)]
 
 WorldBank <- WDI(country = 'all', start = '1996', end = '2015', indicator = c('SI.POV.GINI', 'SP.DYN.LE00.IN', 'NY.GDP.MKTP.CD', 'ny.gdp.totl.rt.zs', 'SP.RUR.TOTL.ZS', 'SE.TER.ENRR'), extra =TRUE)
 
-WorldBank <- WorldBank[-(1:100), ]
-
-WorldBank <- WorldBank[, (3:10)]
+WorldBank <- WorldBank[!is.na(WorldBank$iso3c),]
 
 sapply(WorldBank, class)
 
-colnames(WorldBank)[2] <- "gini"
-colnames(WorldBank)[3] <- "lifeexpectancy"
-colnames(WorldBank)[4] <- "GDP"
-colnames(WorldBank)[5] <- "natres"
-colnames(WorldBank)[6] <- "ruralpop"
-colnames(WorldBank)[7] <- "tertiaryschool"
+colnames(WorldBank)[4] <- "gini"
+colnames(WorldBank)[5] <- "lifeexpectancy"
+colnames(WorldBank)[6] <- "GDP"
+colnames(WorldBank)[7] <- "natres"
+colnames(WorldBank)[8] <- "ruralpop"
+colnames(WorldBank)[9] <- "tertiaryschool"
+colnames(WorldBank)[2] <- "country.wb"
+
 
 #####Abrir la base de datos de la Cepal
 
@@ -94,10 +96,12 @@ CepalGastos <- CepalGastos[,-(2:7)]
 CepalGastos <- gather(CepalGastos, country, CepalGastos)
 
 colnames(CepalGastos)[2] <- "year"
+colnames(CepalGastos)[1] <- "country.cepal"
+
 
 CepalGastos$iso3c <- countrycode(CepalGastos$country, 'country.name', 'iso3c', warn = TRUE)
+CepalGastos$iso3c[CepalGastos$country=="REP. DOMINICANA"] <- "DOM"
 
-CepalGastos <- CepalGastos[,-(1)] 
 
 #####Datos Gottemburgo
 
@@ -154,11 +158,17 @@ QoGts<-QoGts[!(QoGts$year==1993),]
 QoGts<-QoGts[!(QoGts$year==1994),]
 QoGts<-QoGts[!(QoGts$year==2016),]
 
-QoGts <- QoGts[, c( "cname", 'year', "fh_status","fh_fotpc", "dr_sg", "dr_eg", "hf_trade", "sgi_ecgf", "fi_index", "fi_index_cl", "hf_business", "hf_efiscore", "hf_financ", "hf_fiscal")]
+
+QoGts <- QoGts[, c( "cname", 'year', "fh_status","fh_fotpc", "dr_sg", 
+                    "dr_eg", "hf_trade", "sgi_ecgf", "fi_index", "fi_index_cl", 
+                    "hf_business", "hf_efiscore", "hf_financ", "hf_fiscal")]
 
 QoGts$iso3c <- countrycode(QoGts$cname, 'country.name', 'iso3c', warn = TRUE)
 
-QoGts <- QoGts[, -1]
+QoGts <- QoGts[!QoGts$cname %in% c("Germany, East", "Germany, West", 
+                                   "Korea, North", "Micronesia", "Serbia and Montenegro"),]
+
+
 
 
 #####Datos FOTPS
@@ -175,7 +185,11 @@ names(FOTP)[1] <- c("country")
 
 FOTP$iso3c <- countrycode(FOTP$country, 'country.name', 'iso3c', warn = TRUE)
 
-FOTP <- FOTP[, 2:4]
+FOTP <- FOTP[!FOTP$country %in% c("Crimea","Germany, East", "Germany, West", 
+                                   "Israeli-Occupied Territories and Palestinian Authority",
+                                  "Micronesia","Kosovo", "Serbia and Montenegro", "Transkei", "Yemen, North"),]
+
+names(FOTP)[1] <- c("country.fotp")
 
 
 ####Juntar las seis bases de datos 
