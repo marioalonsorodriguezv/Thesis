@@ -224,6 +224,16 @@ AnalisisAL <- merge(AnalisisRCompletaWEF, CepalGastos, by = c('iso3c', 'year'))
 write.csv(AnalisisAL, file = "AnalisisAL.csv")
 
 
+###Tiramos Serbia y Yemen del Norte
+
+AnalisisRCompletaWEF <- read.csv('AnalisisRCompletaWEF.csv')
+
+AnalisisRCompletaWEF <- AnalisisRCompletaWEF[, -1]
+
+AnalisisRCompletaWEF <- AnalisisRCompletaWEF[!AnalisisRCompletaWEF$cname %in% c("Yemen, North",
+                                                                                "Serbia"),]
+write.csv(AnalisisRCompletaWEF, file = "AnalisisRCompletaWEF.csv")
+
 #####Crear dataframes para el scatterplot y el heatmap
 
 write.csv (IDEA, "IDEA.csv")
