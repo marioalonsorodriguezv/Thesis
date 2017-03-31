@@ -1,0 +1,416 @@
+---
+title: "Party finance regulation"
+author: "Alvaro Lopez, Mario Rodriguez and Mariano Valentini"
+date: "March 28, 2017"
+output:
+  pdf_document: default
+  html_document: default
+  word_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r commands, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+
+library(WDI)
+library(countrycode)
+library(rio)
+library(stargazer)
+library(ggplot2)
+library(tidyr)
+library(plotly)
+library(plm)
+library(googleVis)
+library(lmtest)
+library(WDI)
+library(countrycode)
+library(xlsx)
+library(openxlsx)
+library(repmis)
+library(tidyr)
+library(WDI)
+library(XML)
+library(plyr)
+library(plm)
+library(dplyr)
+library(ggplot2)
+library(plotly)
+library(foreign)
+
+setwd("/Users/alvarolopezguiresse/GoogleDrive/[] ADMINISTRACION PUBLICA/tesis/Thesis")
+
+```
+
+
+# Abstract  
+Abstract.
+
+_Key words: Control of corruption, Party finance, Democracy promotion, _
+
+# Party finance regulation index (PFRI)
+
+## Model: Global. 
+
+### Descriptive statistics.
+
+#### Tables.
+Tables...
+
+#### Grafico de lineas de evolucion en el tiempo del PFR dividido por regiones: America, Europa, Africa, Oceania, Asia.
+This graph shows the ...
+
+```{r plot1, echo = FALSE, warning=FALSE, message=FALSE, fig.height = 3, fig.width =5.5}
+
+# --> (1) Gr??fico de l??neas de evoluci??n en el tiempo del PFR dividido por 
+# regiones: Am??rica, Europa, ??frica, Ocean??a, Asia.
+############################################################################
+df <- read.csv("AnalisisRCompleta.csv")
+
+# ->? se eliminan pa??ses con NA values.
+
+# se calculan promedio por a??o.
+gr_1 <- aggregate(idea_pct ~ year + un_region_name, data = df, FUN = function(x) mn = mean(x))
+
+
+p1 <- ggplot(data=gr_1, aes(x=year, y=idea_pct, colour=un_region_name)) + geom_line() + theme_bw(9)
+
+p1 <- p1 + 
+  labs(title = "PFR Index time series by region 1996 - 2015", x="year", y="PFR Index")
+p1 <- p1 + 
+  guides(color=guide_legend("Region")) 
+p1 <- p1 + 
+  theme(legend.position="bottom", legend.background = element_rect(colour = "black", size = 0.5))  
+p1 <- p1 + 
+  theme(panel.border=element_rect(fill=NA)) + theme(plot.background = element_rect(colour = "black", size = 0.5))
+p1 <- p1 + 
+  theme(plot.title = element_text(hjust = 0.5))
+p1 <- p1 + 
+  theme(strip.background=element_rect(fill="white")) + 
+  theme(strip.background=element_rect(fill="white")) + 
+  theme(plot.title = element_text(size = 10, face = "bold"), 
+        legend.title=element_text(size=8) , legend.text=element_text(size=6), 
+        legend.key.width = unit(0.3, "cm"), legend.key.height = unit(0.3, "cm"),
+        plot.margin=unit(c(5,10,5,10),"mm"))
+p1
+
+
+```
+
+#### Grafico de lineas de evolucion de los subindices: America, Europa, Africa, Ocean??a, Asia.
+This graph shows ...
+
+```{r plot1b, echo = FALSE, warning=FALSE, message=FALSE, fig.height = 3, fig.width = 5.5}
+df <- read.csv("AnalisisRCompleta.csv")
+
+# se calculan promedio por a??o.
+gr_1b <- aggregate(cbind(idea_pct, blpi_pct, pf_pct, rs_pct, os_pct ) ~ year + 
+                      un_region_name, 
+                    data = df, FUN = function(x) mn = mean(x))
+
+names(gr_1b)[3:7] <- c("PFR","BLPI","PF","RS","OS")
+gr_1b <- gather(gr_1b, "subindex", "value", 3:7)
+
+p1b <- ggplot(data=gr_1b, aes(x=year, y=value, colour=subindex)) + 
+  geom_line() + theme_bw() + facet_grid(~un_region_name)
+
+p1b <- p1b + 
+  labs(title = "PFR Subindexes time series all countries 1996-2015", x="year", 
+       y="Index") + 
+  guides(color=guide_legend("Index"), labels = c("BLPI", "PFRI", "OS", "PF", "RS")) + 
+  theme(legend.position="bottom", legend.background = element_rect(colour = "black", 
+                                                                   size = 0.5)) + 
+  theme(panel.border=element_rect(fill=NA)) + 
+  theme(plot.background = element_rect(colour = "black", size = 0.5)) +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  theme(strip.background=element_rect(fill="white")) + 
+  theme(strip.background=element_rect(fill="white")) + 
+  theme(plot.title = element_text(size = 10, face = "bold"), 
+        legend.title=element_text(size=8) , legend.text=element_text(size=6), 
+        legend.key.width = unit(0.3, "cm"), legend.key.height = unit(0.3, "cm"),
+        plot.margin=unit(c(5,10,5,10),"mm")) +
+theme(axis.text = element_text(size = 6))
+p1b
+
+
+
+```
+
+#### Grafico de barras diferencia PFR 1996-2015, dividido por categoria y dentro de cada categoria las cinco regiones.
+This graph shows that ...
+
+```{r plot2, echo = FALSE, warning=FALSE, message=FALSE, fig.height = 3, fig.width = 5.5}
+
+# --> (2) Gr??fico de barras diferencia PFR 1996-2015, dividido por categor??a y 
+# dentro de cada categor??a las cinco regiones.
+############################################################################
+df <- read.csv("AnalisisRCompleta.csv")
+gr_2 <- aggregate(cbind(blpi_pct, pf_pct, rs_pct, os_pct ) ~ year + un_region_name, data = df, FUN = function(x) mn = mean(x))
+gr_2_bar <- subset(gr_2, year=="2015" | year=="1996")
+gr_2_bar_r <- gather(gr_2_bar, "subindex", "value", 3:6)
+
+
+
+p2 <- ggplot(gr_2_bar_r,aes(un_region_name,value,fill=subindex)) +
+  geom_bar(stat="identity",position="dodge", colour="black") + 
+  facet_grid(~year) + theme_bw(base_size = 9)
+
+
+
+p2 <- p2 + 
+  labs(title = "PFR Subindex level in 1996-2015", x = "Region", y = "PFR Subindex") 
+p2 <- p2 + 
+  scale_fill_brewer(name="PFR Subindex", labels=c("BLPI", "PF", "RS","ROS"))
+p2 <- p2 + 
+  theme(legend.position="bottom", legend.background = element_rect(colour = "black"))  
+p2 <- p2 + 
+  theme(panel.border=element_rect(fill=NA)) + 
+  theme(plot.background = element_rect(colour = "black", size = 0.5))
+p2 <- p2 + 
+  theme(plot.title = element_text(hjust = 0.5))
+p2 <- p2 + 
+  theme(strip.background=element_rect(fill="white")) + 
+    theme(plot.title = element_text(size = 10, face = "bold"), 
+          legend.title=element_text(size=8) , legend.text=element_text(size=6), 
+          legend.key.width = unit(0.3, "cm"), legend.key.height = unit(0.3, "cm"),
+          plot.margin=unit(c(5,10,5,10),"mm"))
+
+p2
+```
+
+### Modelo de regresion global.
+
+#### Variable description and linear model equation.
+
+*Dependent Variable:* World Bank Control of Corruption Index, from the World Governance Indicators database _CoC_.
+
+*Explanatory Variable:* The main independent (explanatory) variable used for our research is Party Finance Regulation Index, written as _PFR_.
+
+*Control Variables:*.      
+
+*Regression Equation:* The regression equation is written as follows:  
+            $CoC_{ij} = \beta_i(country_i) + \beta_1(PFR_{ij}) + \epsilon$
+
+## Modelo de regresion Latin America.
+
+### Descriptive statistics.
+
+#### Tables.
+Tables...
+
+#### Grafico de lineas de evoluci??n en el tiempo del PFR dividido por regiones: South America and Central America.
+This graph shows the ...
+
+```{r plot1la, echo = FALSE, warning=FALSE, message=FALSE, fig.height = 3, fig.width = 5.5}
+
+
+# Latino America.
+#################
+df <- read.csv("AnalisisRCompleta.csv")
+df <- df[df$iso3c %in% c("ARG", "BOL", "BRA", "CHL", "COL", "DOM", "ECU", "GTM", "HND", "MEX", 
+                         "NIC", "PAN", "PER", "PRY", "SLV", "URY", "VEN"),]
+
+# se calculan promedio por a??o.
+gr_1la <- aggregate(cbind(idea_pct, blpi_pct, pf_pct, rs_pct, os_pct ) ~ year, 
+                    data = df, FUN = function(x) mn = mean(x))
+
+names(gr_1la)[2:6] <- c("PFR","BLPI","PF","RS","OS")
+gr_1la <- gather(gr_1la, "subindex", "value", 2:6)
+
+p1la <- ggplot(data=gr_1la, aes(x=year, y=value, colour=subindex)) + 
+  geom_line() + theme_bw()
+
+
+p1la <- p1la + 
+  labs(title = "PFRI & Subindexes time series for Latin America 1996-2015", x="year", 
+             y="Index") + 
+  guides(color=guide_legend("Index"), labels = c("BLPI", "PFRI", "OS", "PF", "RS")) + 
+  theme(legend.position="bottom", legend.background = element_rect(colour = "black", 
+                                                                   size = 0.5)) + 
+  theme(panel.border=element_rect(fill=NA)) + 
+  theme(plot.background = element_rect(colour = "black", size = 0.5)) +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  theme(strip.background=element_rect(fill="white")) + 
+  theme(strip.background=element_rect(fill="white")) + 
+  theme(plot.title = element_text(size = 10, face = "bold"), 
+        legend.title=element_text(size=8) , legend.text=element_text(size=6), 
+        legend.key.width = unit(0.3, "cm"), legend.key.height = unit(0.3, "cm"),
+        plot.margin=unit(c(5,10,5,10),"mm"))
+p1la
+#################
+
+
+
+```
+
+####  gr??fico de barras, evoluci??n PFR Index 96-15, dividido por pa??ses con la media de LA. (Gr??fico 5 Gtvo.)
+This graph shows the ...
+```{r plot2la, echo = FALSE, warning=FALSE, message=FALSE, fig.height = 3, fig.width = 5.5}
+
+# --> (4) gr??fico de barras, evoluci??n PFR Index 96-15, dividido por pa??ses 
+# con la media de LA. (Gr??fico 5 Gtvo.) --> South America...
+#########################################################################
+df <- read.csv("AnalisisRCompleta.csv")
+df <- subset(df, un_intermediate._region_name == "Caribbean" | 
+                       un_intermediate._region_name == "South America" | 
+                       un_intermediate._region_name =="Central America")
+df <- subset(df, year == 2015 | year == 2006)
+
+df$Year <- "NULL"
+df$Year[which(df$year == 2006)] <- "2006"
+df$Year[which(df$year == 2015)] <- "2015"
+
+dfsa <- subset(df, un_intermediate._region_name == "South America")
+
+
+p4a <- ggplot(dfsa,aes(iso3c,idea_pct)) +
+  geom_bar(stat="identity",position="dodge", aes(fill = Year)) +
+  theme_bw(9)
+  
+p4a <- p4a + 
+  labs(title = "PFR Index level in 2006-2015: South America", x = "Country", 
+       y = "PFR Index") + 
+  scale_fill_manual(name = "", labels=c("2006", "2015"), 
+                    values = c("#9ecae1","#084594")) +
+  theme(legend.position="bottom", legend.background = element_rect(colour = "black")) +
+  theme(panel.border=element_rect(fill=NA)) + 
+  theme(plot.background = element_rect(colour = "black", size = 0.5)) +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  theme(strip.background=element_rect(fill="white")) + 
+  theme(plot.title = element_text(size = 10, face = "bold"), 
+        legend.title=element_text(size=8) , legend.text=element_text(size=6), 
+        legend.key.width = unit(0.3, "cm"), legend.key.height = unit(0.3, "cm"),
+        plot.margin=unit(c(5,10,5,10),"mm"))
+p4a
+
+############################################################################
+
+
+```
+
+####  gr??fico de barras, evoluci??n PFR Index 96-15, dividido por pa??ses con la media de LA. (Gr??fico 5 Gtvo.)
+This graph shows the ...
+
+```{r plot3la, echo = FALSE, warning=FALSE, message=FALSE, fig.height = 3, fig.width = 5.5}
+
+
+
+# --> (4) gr??fico de barras, evoluci??n PFR Index 96-15, dividido por pa??ses 
+# con la media de LA. (Gr??fico 5 Gtvo.) --> Central America...
+#########################################################################
+df <- read.csv("AnalisisRCompleta.csv")
+df <- subset(df, un_intermediate._region_name == "Caribbean" | 
+               un_intermediate._region_name == "South America" | 
+               un_intermediate._region_name =="Central America")
+df <- subset(df, year == 2015 | year == 2006)
+
+df$Year <- "NULL"
+df$Year[which(df$year == 2006)] <- "2006"
+df$Year[which(df$year == 2015)] <- "2015"
+
+dfca <- subset(df, un_intermediate._region_name == "Central America")
+
+
+p4b <- ggplot(dfca,aes(iso3c,idea_pct)) +
+  geom_bar(stat="identity",position="dodge", aes(fill = Year)) +
+  theme_bw(9)
+
+p4b <- p4b + 
+  labs(title = "PFR Index level in 2006-2015: Central America", x = "Country", 
+       y = "PFR Index") + 
+  scale_fill_manual(name = "", labels=c("2006", "2015"), 
+                             values = c("#9ecae1","#084594")) +
+  theme(legend.position="bottom", legend.background = element_rect(colour = "black")) +
+  theme(panel.border=element_rect(fill=NA)) + 
+  theme(plot.background = element_rect(colour = "black", size = 0.5)) +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  theme(strip.background=element_rect(fill="white")) + 
+  theme(plot.title = element_text(size = 10, face = "bold"), 
+        legend.title=element_text(size=8) , legend.text=element_text(size=6), 
+        legend.key.width = unit(0.3, "cm"), legend.key.height = unit(0.3, "cm"),
+        plot.margin=unit(c(5,10,5,10),"mm"))
+p4b
+
+```
+
+#### grafico in law effort and Coc change by country, 2006-15 ...
+This graph shows the ...
+
+```{r plot4la, echo = FALSE, warning=FALSE, message=FALSE, fig.height = 3, fig.width = 5.5}
+
+
+# Latin America
+#################
+
+# data
+#################
+df <- read.csv("AnalisisRCompleta.csv")
+gr_3la <- df[df$iso3c %in% c("ARG", "BOL", "BRA", "CHL", "COL", "DOM", "ECU", "GTM", "HND", "MEX", 
+                         "NIC", "PAN", "PER", "PRY", "SLV", "URY", "VEN"),]
+names(gr_3la)[39] <- "Region"
+gr_3la <- gr_3la[, c("iso3c", "year", "Region", "idea_pct", "CoC")]
+
+
+temp1 <- subset(gr_3la, year=="2015")
+temp2 <- subset(gr_3la, year=="2006")
+temp3 <- merge(temp1, temp2, by = c("iso3c"))
+
+temp3$idea_pct_diff <- temp3$idea_pct.x - temp3$idea_pct.y
+temp3$coc_diff <- temp3$CoC.x - temp3$CoC.y
+temp4 <- gather(temp3, "index_name", "index", 10:11)
+#################
+
+
+# plot
+#################
+p3la <- ggplot(temp4,aes(iso3c,index,fill=index_name)) +
+  geom_bar(stat="identity",position="dodge") + theme_bw(9)
+
+p3la <- p3la + 
+  labs(title = "PFR Index & World Bank Control of Corruption (CoC) \nchange in 2006-2015 period", 
+       x = "Region", y = "PFR Index & CoC change") +
+  scale_fill_manual(name = "", labels=c("World Bank Control of Corruption", "PFR Index"), 
+                    values = c("red","black")) +
+  theme(legend.position="bottom", legend.background = element_rect(colour = "black")) +
+  theme(panel.border=element_rect(fill=NA)) + 
+  theme(plot.background = element_rect(colour = "black", size = 0.5)) +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  theme(strip.background=element_rect(fill="white")) + 
+  theme(plot.title = element_text(size = 10, face = "bold"), 
+        legend.title=element_text(size=8) , legend.text=element_text(size=6), 
+        legend.key.width = unit(0.3, "cm"), legend.key.height = unit(0.3, "cm"),
+        plot.margin=unit(c(5,10,5,10),"mm"))
+p3la
+#################
+
+
+
+```
+
+### Modelo de regresion Latin America.
+
+#### Variable description.
+
+*Dependent Variable:* World Bank Control of Corruption Index, from the World Governance Indicators database _(CoC)_.
+
+*Explanatory Variable:* The main independent (explanatory) variable used for our research is Party Finance Regulation Index _(PFR)_. In adition Public investment from the Cepal database is used as a proxy for ... _(PI)_.
+
+*Control Variables:* Independence of the judiciary, from World economic forum database _(wefji)_      
+
+*Regression Equation:* The regression equation is written as follows:  
+            $CoC_{ij} = \beta_0 + \beta_1(PFR_{ij}) + \beta_2(PI_{ij}) + \beta_3(WEFJI_{ij}) + \beta_4(PFR_{ij})(WEFJI_{ij}) + \beta_5(PI_{ij})(WEFJI_{ij}) + \epsilon_{ij}$
+            
+#### Regression Model.
+
+##### Estimation output.
+
+
+##### Marginal effects.
+
+
+
+
+  

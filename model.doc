@@ -1,0 +1,28 @@
+{\rtf1\fs24
+\trowd\trgaph75\trleft-75\intbl\trqc\clbrdrt\brdrs\cellx3888\clbrdrt\brdrs\cellx7056
+\ql \cell\qc (1)\cell\row
+\trowd\trgaph75\trleft-75\trqc\cellx3888\cellx7056
+\trowd\trgaph75\trleft-75\trqc\clbrdrb\brdrs\cellx3888\clbrdrb\brdrs\cellx7056
+\ql VARIABLES\cell\qc Control of corruption\cell\row
+\trowd\trgaph75\trleft-75\trqc\cellx3888\cellx7056
+\ql \cell\qc \cell\row
+\ql Public investment\cell\qc -3.36e-05***\cell\row
+\ql \cell\qc (1.08e-05)\cell\row
+\ql Judiciary independence\cell\qc 0.0347\cell\row
+\ql \cell\qc (0.0386)\cell\row
+\ql PFR Index\cell\qc -0.379**\cell\row
+\ql \cell\qc (0.168)\cell\row
+\ql c.wefji#c.idea_pct\cell\qc 0.119**\cell\row
+\ql \cell\qc (0.0466)\cell\row
+\ql c.CepalGastoslevel#c.wefji\cell\qc 8.30e-06***\cell\row
+\ql \cell\qc (3.09e-06)\cell\row
+\ql Constant\cell\qc -0.321**\cell\row
+\ql \cell\qc (0.148)\cell\row
+\ql \cell\qc \cell\row
+\ql Observations\cell\qc 167\cell\row
+\trowd\trgaph75\trleft-75\trqc\trbrdrb\brdrs\clbrdrb\brdrs\cellx3888\clbrdrb\brdrs\cellx7056
+\ql Number of ID\cell\qc 17\cell\row
+\pard\qc
+Standard errors in parentheses\par
+*** p<0.01, ** p<0.05, * p<0.1\par
+}
