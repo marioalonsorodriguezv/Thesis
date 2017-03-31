@@ -13,61 +13,6 @@ library(plm)
 possible_dir <- c('/Users/alvarolopezguiresse/GoogleDrive/[] ADMINISTRACION PUBLICA/tesis/Thesis', '/Users/mariorodriguez/Desktop/Thesis')
 repmis::set_valid_wd(possible_dir)
 
-#####Abrir la base de Gotemburgo y limpiarla por a??os
-
-QoGts <- read.csv('qog_std_ts.csv')
-
-QoGts<-QoGts[!(QoGts$year==1946),]
-QoGts<-QoGts[!(QoGts$year==1947),]
-QoGts<-QoGts[!(QoGts$year==1948),]
-QoGts<-QoGts[!(QoGts$year==1949),]
-QoGts<-QoGts[!(QoGts$year==1950),]
-QoGts<-QoGts[!(QoGts$year==1951),]
-QoGts<-QoGts[!(QoGts$year==1952),]
-QoGts<-QoGts[!(QoGts$year==1953),]
-QoGts<-QoGts[!(QoGts$year==1954),]
-QoGts<-QoGts[!(QoGts$year==1955),]
-QoGts<-QoGts[!(QoGts$year==1956),]
-QoGts<-QoGts[!(QoGts$year==1957),]
-QoGts<-QoGts[!(QoGts$year==1958),]
-QoGts<-QoGts[!(QoGts$year==1959),]
-QoGts<-QoGts[!(QoGts$year==1960),]
-QoGts<-QoGts[!(QoGts$year==1961),]
-QoGts<-QoGts[!(QoGts$year==1962),]
-QoGts<-QoGts[!(QoGts$year==1963),]
-QoGts<-QoGts[!(QoGts$year==1964),]
-QoGts<-QoGts[!(QoGts$year==1965),]
-QoGts<-QoGts[!(QoGts$year==1966),]
-QoGts<-QoGts[!(QoGts$year==1967),]
-QoGts<-QoGts[!(QoGts$year==1968),]
-QoGts<-QoGts[!(QoGts$year==1969),]
-QoGts<-QoGts[!(QoGts$year==1970),]
-QoGts<-QoGts[!(QoGts$year==1971),]
-QoGts<-QoGts[!(QoGts$year==1972),]
-QoGts<-QoGts[!(QoGts$year==1973),]
-QoGts<-QoGts[!(QoGts$year==1974),]
-QoGts<-QoGts[!(QoGts$year==1975),]
-QoGts<-QoGts[!(QoGts$year==1976),]
-QoGts<-QoGts[!(QoGts$year==1977),]
-QoGts<-QoGts[!(QoGts$year==1978),]
-QoGts<-QoGts[!(QoGts$year==1979),]
-QoGts<-QoGts[!(QoGts$year==1980),]
-QoGts<-QoGts[!(QoGts$year==1981),]
-QoGts<-QoGts[!(QoGts$year==1982),]
-QoGts<-QoGts[!(QoGts$year==1983),]
-QoGts<-QoGts[!(QoGts$year==1984),]
-QoGts<-QoGts[!(QoGts$year==1985),]
-QoGts<-QoGts[!(QoGts$year==1986),]
-QoGts<-QoGts[!(QoGts$year==1987),]
-QoGts<-QoGts[!(QoGts$year==1988),]
-QoGts<-QoGts[!(QoGts$year==1989),]
-QoGts<-QoGts[!(QoGts$year==1990),]
-QoGts<-QoGts[!(QoGts$year==1991),]
-QoGts<-QoGts[!(QoGts$year==1992),]
-QoGts<-QoGts[!(QoGts$year==1993),]
-QoGts<-QoGts[!(QoGts$year==1994),]
-QoGts<-QoGts[!(QoGts$year==2016),]
-
 ####Abrir la base de IDEA con control of corruption
 
 IDEA <- read.csv("AnalisisR.csv")
@@ -143,17 +88,20 @@ WEFJI <- WEFJI[,-(2)]
 
 #####Descargar datos del world bank y limpiarlos
 
-WorldBank <- WDI(country = 'all', start = '1996', end = '2015', indicator = c('SI.POV.GINI', 'SP.DYN.LE00.IN', 'NY.GDP.MKTP.CD'), extra =TRUE)
+WorldBank <- WDI(country = 'all', start = '1996', end = '2015', indicator = c('SI.POV.GINI', 'SP.DYN.LE00.IN', 'NY.GDP.MKTP.CD', 'ny.gdp.totl.rt.zs', 'SP.RUR.TOTL.ZS', 'SE.TER.ENRR'), extra =TRUE)
 
 WorldBank <- WorldBank[-(1:100), ]
 
-WorldBank <- WorldBank[, (3:7)]
+WorldBank <- WorldBank[, (3:10)]
 
 sapply(WorldBank, class)
 
 colnames(WorldBank)[2] <- "gini"
 colnames(WorldBank)[3] <- "lifeexpectancy"
 colnames(WorldBank)[4] <- "GDP"
+colnames(WorldBank)[5] <- "natres"
+colnames(WorldBank)[6] <- "ruralpop"
+colnames(WorldBank)[7] <- "tertiaryschool"
 
 #####Abrir la base de datos de la Cepal
 
@@ -190,9 +138,92 @@ CepalGastos$iso3c <- countrycode(CepalGastos$country, 'country.name', 'iso3c', w
 
 CepalGastos <- CepalGastos[,-(1)] 
 
-####Juntar las cuatro bases de datos 
+#####Datos Gottemburgo
+
+QoGts <- read.csv('qog_std_ts.csv')
+
+QoGts<-QoGts[!(QoGts$year==1946),]
+QoGts<-QoGts[!(QoGts$year==1947),]
+QoGts<-QoGts[!(QoGts$year==1948),]
+QoGts<-QoGts[!(QoGts$year==1949),]
+QoGts<-QoGts[!(QoGts$year==1950),]
+QoGts<-QoGts[!(QoGts$year==1951),]
+QoGts<-QoGts[!(QoGts$year==1952),]
+QoGts<-QoGts[!(QoGts$year==1953),]
+QoGts<-QoGts[!(QoGts$year==1954),]
+QoGts<-QoGts[!(QoGts$year==1955),]
+QoGts<-QoGts[!(QoGts$year==1956),]
+QoGts<-QoGts[!(QoGts$year==1957),]
+QoGts<-QoGts[!(QoGts$year==1958),]
+QoGts<-QoGts[!(QoGts$year==1959),]
+QoGts<-QoGts[!(QoGts$year==1960),]
+QoGts<-QoGts[!(QoGts$year==1961),]
+QoGts<-QoGts[!(QoGts$year==1962),]
+QoGts<-QoGts[!(QoGts$year==1963),]
+QoGts<-QoGts[!(QoGts$year==1964),]
+QoGts<-QoGts[!(QoGts$year==1965),]
+QoGts<-QoGts[!(QoGts$year==1966),]
+QoGts<-QoGts[!(QoGts$year==1967),]
+QoGts<-QoGts[!(QoGts$year==1968),]
+QoGts<-QoGts[!(QoGts$year==1969),]
+QoGts<-QoGts[!(QoGts$year==1970),]
+QoGts<-QoGts[!(QoGts$year==1971),]
+QoGts<-QoGts[!(QoGts$year==1972),]
+QoGts<-QoGts[!(QoGts$year==1973),]
+QoGts<-QoGts[!(QoGts$year==1974),]
+QoGts<-QoGts[!(QoGts$year==1975),]
+QoGts<-QoGts[!(QoGts$year==1976),]
+QoGts<-QoGts[!(QoGts$year==1977),]
+QoGts<-QoGts[!(QoGts$year==1978),]
+QoGts<-QoGts[!(QoGts$year==1979),]
+QoGts<-QoGts[!(QoGts$year==1980),]
+QoGts<-QoGts[!(QoGts$year==1981),]
+QoGts<-QoGts[!(QoGts$year==1982),]
+QoGts<-QoGts[!(QoGts$year==1983),]
+QoGts<-QoGts[!(QoGts$year==1984),]
+QoGts<-QoGts[!(QoGts$year==1985),]
+QoGts<-QoGts[!(QoGts$year==1986),]
+QoGts<-QoGts[!(QoGts$year==1987),]
+QoGts<-QoGts[!(QoGts$year==1988),]
+QoGts<-QoGts[!(QoGts$year==1989),]
+QoGts<-QoGts[!(QoGts$year==1990),]
+QoGts<-QoGts[!(QoGts$year==1991),]
+QoGts<-QoGts[!(QoGts$year==1992),]
+QoGts<-QoGts[!(QoGts$year==1993),]
+QoGts<-QoGts[!(QoGts$year==1994),]
+QoGts<-QoGts[!(QoGts$year==2016),]
+
+QoGts <- QoGts[, c( "cname", 'year', "fh_status","fh_fotpc", "dr_sg", "dr_eg", "hf_trade", "sgi_ecgf", "fi_index", "fi_index_cl", "hf_business", "hf_efiscore", "hf_financ", "hf_fiscal")]
+
+QoGts$iso3c <- countrycode(QoGts$cname, 'country.name', 'iso3c', warn = TRUE)
+
+QoGts <- QoGts[, -1]
+
+
+#####Datos FOTPS
+
+FOTP <- read.xlsx("FOTPScores.xlsx", 1)
+
+FOTP <- FOTP[, 1:21]
+
+names(FOTP)[2:21] <- c(1996:2015)
+
+FOTP<- gather(FOTP, "year", "FOTP", 2:21)
+
+names(FOTP)[1] <- c("country")
+
+FOTP$iso3c <- countrycode(FOTP$country, 'country.name', 'iso3c', warn = TRUE)
+
+FOTP <- FOTP[, 2:4]
+
+
+####Juntar las seis bases de datos 
 
 AnalisisRCompleta <- merge(IDEA, WorldBank, by = c('iso3c', 'year'))
+
+AnalisisRCompleta <- merge(AnalisisRCompleta, FOTP, by = c('iso3c', 'year'))
+
+AnalisisRCompleta <- merge(AnalisisRCompleta, QoGts, by = c('iso3c', 'year'))
 
 write.csv(AnalisisRCompleta, file = "AnalisisRCompleta.csv")
 
@@ -203,11 +234,3 @@ write.csv(AnalisisRCompletaWEF, file = "AnalisisRCompletaWEF.csv")
 AnalisisAL <- merge(AnalisisRCompleta, CepalGastos, by = c('iso3c', 'year'))
 
 write.csv(AnalisisAL, file = "AnalisisAL.csv")
-
-write.dta(AnalisisAL, file = "AnalisisAL.dta", version = 10,
-          convert.dates = TRUE, tz = "GMT",
-          convert.factors = c("labels", "string", "numeric", "codes"))
-
-#####Datos naturales
-
-WorldBankNatResources <- WDI(country = 'all', start = '1996', end = '2015', indicator = c('ny.gdp.totl.rt.zs'), extra =TRUE)
