@@ -15,6 +15,7 @@ library(plotly)
 library(plm)
 library(googleVis)
 library(reshape2)
+library(foreign)
 
 possible_dir <- c('/Users/alvarolopezguiresse/GoogleDrive/[] ADMINISTRACION PUBLICA/tesis/Thesis', '/Users/mariorodriguez/Desktop/Thesis')
 repmis::set_valid_wd(possible_dir)
@@ -252,6 +253,19 @@ IDEAmap <- gvisGeoChart(IDEAmapdata, locationvar = 'iso3c',
                        ))
 
 print(IDEAmap, tag = 'chart')
+
+
+####Guardar datos en dta
+
+write.dta(AnalisisAL, 'AnalisisAL.dta', version = 10,
+          convert.dates = TRUE, tz = "GMT",
+          convert.factors = c("labels", "string", "numeric", "codes"))
+
+write.dta(AnalisisRCompletaWEF, 'AnalisisRCompletaWEF.dta', version = 10,
+          convert.dates = TRUE, tz = "GMT",
+          convert.factors = c("labels", "string", "numeric", "codes"))
+
+
 
 ####Regresion en r
 
