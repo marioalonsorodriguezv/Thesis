@@ -10,15 +10,16 @@ set more off
 cd "/Users/alvarolopezguiresse/GoogleDrive/[] ADMINISTRACION PUBLICA/tesis/Thesis/STATA"
 
 //import excel graficas_y_analisis_v2.xlsx, sheet("importar_software") firstrow
-import excel AnalisisAL.xlsx, sheet("AnalisisAL.csv") firstrow
+import excel AnalisisRCompletaWEF, sheet("AnalisisRCompletaWEF.csv") firstrow
 
-save AnalisisAL.dta, replace
 
 
 ******************
 *** las variables en string son convertidas a categorias numericas
 ******************
-
+encode iso3c, generate(iso3c_code)
+drop iso3c
+rename iso3c_code iso3c
 
 
 
@@ -89,7 +90,7 @@ drop if un_region==5
 
 
 //el setting de panel es activado i-country code j-1996:2015.
-xtset ID year
+xtset iso3c year
 
 
 
