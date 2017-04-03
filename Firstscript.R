@@ -16,6 +16,8 @@ library(plm)
 library(googleVis)
 library(reshape2)
 library(foreign)
+library(calibrate)
+library(rworldmap)
 
 possible_dir <- c('/Users/alvarolopezguiresse/GoogleDrive/[] ADMINISTRACION PUBLICA/tesis/Thesis', '/Users/mariorodriguez/Desktop/Thesis')
 repmis::set_valid_wd(possible_dir)
@@ -265,7 +267,53 @@ write.dta(AnalisisRCompletaWEF, 'AnalisisRCompletaWEF.dta', version = 10,
           convert.dates = TRUE, tz = "GMT",
           convert.factors = c("labels", "string", "numeric", "codes"))
 
+#####Recodificar coc e idea_pct
 
+AnalisisAL <- read.csv("AnalisisAL.csv")
+
+AnalisisAL <- AnalisisAL[,-(1)] 
+
+AnalisisAL$CoCRecoded <- AnalisisAL$CoC + 2.5
+
+AnalisisAL$CoCRecoded <- AnalisisAL$CoCRecoded * 2
+
+AnalisisAL$IDEARecoded <- AnalisisAL$idea_pct * 100
+
+##### Crear Scatterplot con datos de 2015
+
+AnalisisAL2015 <- AnalisisAL[(AnalisisAL$year=="2015"),]
+
+p <- plot_ly(AnalisisAL2015, x = ~CoCRecoded, y = ~idea_pct, color = ~wefji, size = ~wefji)
+
+plot(idea_pct~CoCRecoded, xlab = 'Control of Corruption', ylab = 'Political Finance in-law effort', main = 'Effect of political finance on control of corruption', data = AnalisisAL2015)
+
+textxy(AnalisisAL2015$CoCRecoded, AnalisisAL2015$idea_pct, AnalisisAL2015$country.IDEA, pos = 3, cex = 0.7)
+
+plot(AnalisisAL2015$CoCRecoded, AnalisisAL2015$IDEARecoded, 
+     main= "Political Finance and Control of Corruption in Latin America",
+     xlab= "Control of Corruption (recoded)",
+     ylab= "In-Law Political Finance Efforts",
+     col= "blue", pch = 19, cex = 1, lty = "solid", lwd = 2, data)
+
+##### Heatmap global
+
+AnalisisRCompleta <- read.csv("AnalisisRCompleta.csv")
+
+AnalisisRCompleta <- AnalisisRCompleta[,-(1)] 
+
+AnalisisRCompleta$IDEARecoded <- AnalisisRCompleta$idea_pct * 100
+
+AnalisisR2015 <- AnalisisRCompleta[(AnalisisRCompleta$year=="2015"),]
+
+n <- joinCountryData2Map(AnalisisR2015, joinCode="ISO3", nameJoinColumn="iso3c")
+
+mapCountryData(n, nameColumnToPlot="IDEARecoded", mapTitle="World", colourPalette = "heat", catMethod = "pretty")
+
+##### Heatmap latinoamerica
+
+n2 <- joinCountryData2Map(AnalisisAL2015, joinCode="ISO3", nameJoinColumn="iso3c")
+
+mapCountryData(n2, nameColumnToPlot="IDEARecoded", mapTitle="Latin America", mapRegion="latin america", colourPalette = "heat")
 
 ####Regresion en r
 
