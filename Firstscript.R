@@ -18,6 +18,7 @@ library(reshape2)
 library(foreign)
 library(calibrate)
 library(rworldmap)
+library(magrittr)
 
 possible_dir <- c('/Users/alvarolopezguiresse/GoogleDrive/[] ADMINISTRACION PUBLICA/tesis/Thesis', '/Users/mariorodriguez/Desktop/Thesis')
 repmis::set_valid_wd(possible_dir)
@@ -283,17 +284,45 @@ AnalisisAL$IDEARecoded <- AnalisisAL$idea_pct * 100
 
 AnalisisAL2015 <- AnalisisAL[(AnalisisAL$year=="2015"),]
 
-p <- plot_ly(AnalisisAL2015, x = ~CoCRecoded, y = ~idea_pct, color = ~wefji, size = ~wefji)
+p <- plot_ly(AnalisisAL2015, x = ~idea_pct, y = ~CoCRecoded, color = ~wefji, size = ~wefji,
+             text= ~iso3c, type='scatter', mode= 'markers', 
+             title="Effect of Political Finance Regulation on Control of Corruption 2006") %>% 
+  add_annotations(x = AnalisisAL2015$idea_pct,
+                  y = AnalisisAL2015$CoCRecoded,
+                  text = rownames(AnalisisAL2015$iso3c),
+                  xref = "x",
+                  yref = "y",
+                  showarrow = TRUE,
+                  ax = 20,
+                  ay = -40) %>%
+                  layout(title ='Party Finance Reform and Control of Corruption 2015', 
+                         xaxis = list(title='Political Finance Regulation'), 
+                         yaxis = list(title='Control of Corruption'))
+                         
 
-plot(idea_pct~CoCRecoded, xlab = 'Control of Corruption', ylab = 'Political Finance in-law effort', main = 'Effect of political finance on control of corruption', data = AnalisisAL2015)
+p
 
-textxy(AnalisisAL2015$CoCRecoded, AnalisisAL2015$idea_pct, AnalisisAL2015$country.IDEA, pos = 3, cex = 0.7)
+##### Crear Scatterplot con datos de 2006
 
-plot(AnalisisAL2015$CoCRecoded, AnalisisAL2015$IDEARecoded, 
-     main= "Political Finance and Control of Corruption in Latin America",
-     xlab= "Control of Corruption (recoded)",
-     ylab= "In-Law Political Finance Efforts",
-     col= "blue", pch = 19, cex = 1, lty = "solid", lwd = 2, data)
+AnalisisAL2006 <- AnalisisAL[(AnalisisAL$year=="2006"),]
+
+p2006 <- plot_ly(AnalisisAL2006, x = ~idea_pct, y = ~CoCRecoded, color = ~wefji, size = ~wefji,
+             text= ~iso3c, type='scatter', mode= 'markers', title="Effect of Political Finance Regulation on Control of Corruption 2006") %>% 
+  add_annotations(x = AnalisisAL2006$idea_pct,
+                  y = AnalisisAL2006$CoCRecoded,
+                  text = rownames(AnalisisAL2006$iso3c),
+                  xref = "x",
+                  yref = "y",
+                  showarrow = T,
+                  arrowhead = 4,
+                  arrowsize = .5,
+                  ax = 20,
+                  ay = -40) %>%
+  layout(title ='Party Finance Reform and Control of Corruption 2006', 
+         xaxis = list(title='Political Finance Regulation'), 
+         yaxis = list(title='Control of Corruption'))
+
+p2006
 
 ##### Heatmap global
 
@@ -307,28 +336,43 @@ AnalisisR2015 <- AnalisisRCompleta[(AnalisisRCompleta$year=="2015"),]
 
 n <- joinCountryData2Map(AnalisisR2015, joinCode="ISO3", nameJoinColumn="iso3c")
 
-mapCountryData(n, nameColumnToPlot="IDEARecoded", mapTitle="World", colourPalette = "heat", catMethod = "pretty")
+mapCountryData(n, nameColumnToPlot="idea_pct", mapTitle="Political Finance Regulation Index 2015 (World)", colourPalette = c("white", 'blue'), catMethod = "pretty")
 
 ##### Heatmap latinoamerica
 
 n2 <- joinCountryData2Map(AnalisisAL2015, joinCode="ISO3", nameJoinColumn="iso3c")
 
-mapCountryData(n2, nameColumnToPlot="IDEARecoded", mapTitle="Latin America", mapRegion="latin america", colourPalette = "heat")
+mapCountryData(n2, nameColumnToPlot="idea_pct", mapTitle="Political Finance Regulation Index 2015 (Latin America)", mapRegion="latin america", colourPalette = "heat")
+
+
+######Transformar gastos de cepal a numeros absolutos
+
+AnalisisAL$CepalGastosAbs <- AnalisisAL$CepalGastos * AnalisisAL$GDP
+
+AnalisisAL$CepalGastosAbs <- AnalisisAL$CepalGastosAbs / 100
+
+AnalisisAL$CepalGastosAbs <- AnalisisAL$CepalGastosAbs / 1000000000
+
+######Subset de Freedom House
+
+AnalisisRCompletaWEF_fh <- AnalisisRCompletaWEF
+
 
 ####Regresion en r
 
-m1 <- plm(CoC ~ idea_pct + lifeexpectancy + natres + wefji:natres + wefji:idea_pct, data=AnalisisRCompletaWEF, index= c('iso3c', 'year'), model = 'within')
+AnalisisRCompletaWEF <- read.csv('AnalisisRCompletaWEF.csv')
+
+m1 <- plm(CoC ~ idea_pct + natres + lifeexpectancy + wefji + wefji:natres + wefji:idea_pct, data=AnalisisRCompletaWEF, index= c('iso3c', 'year'), model = 'within')
 summary(m1)
 
-m2 <- plm(CoC ~ idea_pct*wefji + lifeexpectancy + natres, data=AnalisisRCompletaWEF, index= c('iso3c', 'year'), model = 'random')
+m2 <- plm(CoC ~ idea_pct + lifeexpectancy + natres + wefji:natres + wefji:idea_pct, data=AnalisisRCompletaWEF, index= c('iso3c', 'year'), model = 'random')
 summary(m2)
 
-m3 <- plm(CoC ~ idea_pct*wefji+ lifeexpectancy + CepalGastos*wefji, data=AnalisisAL, index= c('iso3c', 'year'), model = 'within')
+m3 <- plm(CoC ~ idea_pct*wefji+ lifeexpectancy + CepalGastosAbs*wefji + ruralpop, data=AnalisisAL, index= c('iso3c', 'year'), model = 'within')
 summary(m3)
 
-m4 <- plm(CoC ~ idea_pct*wefji+ lifeexpectancy + CepalGastos*wefji, data=AnalisisAL, index= c('iso3c', 'year'), model = 'within')
+stargazer(m3)
+
+m4 <- plm(CoC ~ idea_pct*wefji+ lifeexpectancy + CepalGastosAbs*wefji + ruralpop, data=AnalisisAL, index= c('iso3c', 'year'), model = 'within')
 summary(m4)
-
-
-
 
