@@ -280,6 +280,8 @@ AnalisisAL$CoCRecoded <- AnalisisAL$CoCRecoded * 2
 
 AnalisisAL$IDEARecoded <- AnalisisAL$idea_pct * 100
 
+write.csv(AnalisisAL, 'AnalisisAL.csv')
+
 ##### Crear Scatterplot con datos de 2015
 
 AnalisisAL2015 <- AnalisisAL[(AnalisisAL$year=="2015"),]
@@ -297,12 +299,14 @@ p <- plot_ly(AnalisisAL2015, x = ~idea_pct, y = ~CoCRecoded, color = ~wefji, siz
                   ay = -40) %>%
                   layout(title ='Party Finance Reform and Control of Corruption 2015', 
                          xaxis = list(title='Political Finance Regulation'), 
-                         yaxis = list(title='Control of Corruption'))
+                         yaxis = list(title='Control of Corruption'), autosize = F)
                          
 
 p
 
 ##### Crear Scatterplot con datos de 2006
+
+AnalisisAL <- read.csv('AnalisisAL.csv')
 
 AnalisisAL2006 <- AnalisisAL[(AnalisisAL$year=="2006"),]
 
@@ -317,10 +321,10 @@ p2006 <- plot_ly(AnalisisAL2006, x = ~idea_pct, y = ~CoCRecoded, color = ~wefji,
                   arrowhead = 4,
                   arrowsize = .5,
                   ax = 20,
-                  ay = -40) %>%
-  layout(title ='Party Finance Reform and Control of Corruption 2006', 
-         xaxis = list(title='Political Finance Regulation'), 
-         yaxis = list(title='Control of Corruption'))
+                  ay = -40) %>% 
+                  layout(title ='Party Finance Reform and Control of Corruption 2006', 
+                  xaxis = list(title='Political Finance Regulation'), 
+                  yaxis = list(title='Control of Corruption'), autosize = F)
 
 p2006
 
@@ -336,9 +340,10 @@ AnalisisR2015 <- AnalisisRCompleta[(AnalisisRCompleta$year=="2015"),]
 
 n <- joinCountryData2Map(AnalisisR2015, joinCode="ISO3", nameJoinColumn="iso3c")
 
-mapCountryData(n, nameColumnToPlot="idea_pct", mapTitle="Political Finance Regulation Index 2015 (World)", colourPalette = c("white", 'blue'), catMethod = "pretty")
+mapCountryData(n, nameColumnToPlot="idea_pct", mapTitle="Political Finance Regulation Index 2015 (World)", colourPalette = 'heat', catMethod = "pretty")
 
 ##### Heatmap latinoamerica
+
 
 n2 <- joinCountryData2Map(AnalisisAL2015, joinCode="ISO3", nameJoinColumn="iso3c")
 
@@ -376,3 +381,5 @@ stargazer(m3)
 m4 <- plm(CoC ~ idea_pct*wefji+ lifeexpectancy + CepalGastosAbs*wefji + ruralpop, data=AnalisisAL, index= c('iso3c', 'year'), model = 'within')
 summary(m4)
 
+
+wefji <- read.csv('WEFJudicialIndependence.csv')
