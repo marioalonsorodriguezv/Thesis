@@ -298,8 +298,8 @@ p <- plot_ly(AnalisisAL2015, x = ~idea_pct, y = ~CoCRecoded, color = ~wefji, siz
                   ax = 20,
                   ay = -40) %>%
                   layout(title ='Party Finance Reform and Control of Corruption 2015', 
-                         xaxis = list(title='Political Finance Regulation'), 
-                         yaxis = list(title='Control of Corruption'), autosize = F)
+                         xaxis = list(title='Political Finance Regulation', range = c(0, 1)), 
+                         yaxis = list(title='Control of Corruption', range = c(0, 10)), autosize = F)
                          
 
 p
@@ -323,8 +323,8 @@ p2006 <- plot_ly(AnalisisAL2006, x = ~idea_pct, y = ~CoCRecoded, color = ~wefji,
                   ax = 20,
                   ay = -40) %>% 
                   layout(title ='Party Finance Reform and Control of Corruption 2006', 
-                  xaxis = list(title='Political Finance Regulation'), 
-                  yaxis = list(title='Control of Corruption'), autosize = F)
+                  xaxis = list(title='Political Finance Regulation', range = c(0, 1)), 
+                  yaxis = list(title='Control of Corruption', range = c(0, 10)), autosize = F)
 
 p2006
 
