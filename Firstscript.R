@@ -286,20 +286,23 @@ write.csv(AnalisisAL, 'AnalisisAL.csv')
 
 AnalisisAL2015 <- AnalisisAL[(AnalisisAL$year=="2015"),]
 
-p <- plot_ly(AnalisisAL2015, x = ~idea_pct, y = ~CoCRecoded, color = ~wefji, size = ~wefji,
+AnalisisAL2015 <- AnalisisAL2015[!(AnalisisAL2015$country=="Haiti"),]
+
+p <- plot_ly(AnalisisAL2015, x = ~idea_pct, y = ~CoCRecoded, color = ~wefji, marker = list(size = 30),
              text= ~iso3c, type='scatter', mode= 'markers', 
              title="Effect of Political Finance Regulation on Control of Corruption 2006") %>% 
   add_annotations(x = AnalisisAL2015$idea_pct,
                   y = AnalisisAL2015$CoCRecoded,
                   text = rownames(AnalisisAL2015$iso3c),
+                  font = list(color = 'white'),
                   xref = "x",
                   yref = "y",
-                  showarrow = TRUE,
+                  showarrow = F,
                   ax = 20,
                   ay = -40) %>%
                   layout(title ='Party Finance Reform and Control of Corruption 2015', 
                          xaxis = list(title='Political Finance Regulation', range = c(0, 1)), 
-                         yaxis = list(title='Control of Corruption', range = c(0, 10)), autosize = F)
+                         yaxis = list(title='Control of Corruption', range = c(0, 10)), autosize = T)
                          
 
 p
@@ -310,21 +313,24 @@ AnalisisAL <- read.csv('AnalisisAL.csv')
 
 AnalisisAL2006 <- AnalisisAL[(AnalisisAL$year=="2006"),]
 
-p2006 <- plot_ly(AnalisisAL2006, x = ~idea_pct, y = ~CoCRecoded, color = ~wefji, size = ~wefji,
+AnalisisAL2006 <- AnalisisAL2006[!(AnalisisAL2006$country=="Haiti"),]
+
+p2006 <- plot_ly(AnalisisAL2006, x = ~idea_pct, y = ~CoCRecoded, color = ~wefji, marker = list(size = 30),
              text= ~iso3c, type='scatter', mode= 'markers', title="Effect of Political Finance Regulation on Control of Corruption 2006") %>% 
   add_annotations(x = AnalisisAL2006$idea_pct,
                   y = AnalisisAL2006$CoCRecoded,
                   text = rownames(AnalisisAL2006$iso3c),
                   xref = "x",
                   yref = "y",
-                  showarrow = T,
+                  showarrow = F,
+                  font = list(color = 'white'),
                   arrowhead = 4,
                   arrowsize = .5,
                   ax = 20,
                   ay = -40) %>% 
                   layout(title ='Party Finance Reform and Control of Corruption 2006', 
                   xaxis = list(title='Political Finance Regulation', range = c(0, 1)), 
-                  yaxis = list(title='Control of Corruption', range = c(0, 10)), autosize = F)
+                  yaxis = list(title='Control of Corruption', range = c(0, 10)), autosize = T)
 
 p2006
 
